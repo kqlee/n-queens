@@ -79,8 +79,8 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return this.get(rowIndex).reduce(function(count, square) {
-        return !!square ? ++count : count;
+      return this.get(rowIndex).reduce(function(pieces, square) {
+        return !!square ? ++pieces : pieces;
       }, 0) > 1;
     },
 
@@ -99,8 +99,8 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return this.rows().reduce(function(count, row) {
-        return !!row[colIndex] ? ++count : count;
+      return this.rows().reduce(function(pieces, row) {
+        return !!row[colIndex] ? ++pieces : pieces;
       }, 0) > 1;
     },
 
@@ -119,16 +119,9 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      var rows = this.rows();
-      var col = majorDiagonalColumnIndexAtFirstRow;
-      var pieces = 0;
-      rows.forEach(function(row) {
-        if (row[col] === 1) {
-          pieces++;
-        }
-        col++;
-      });
-      return pieces > 1;
+      return this.rows().reduce(function(pieces, row, rowIndex) {
+        return !!row[majorDiagonalColumnIndexAtFirstRow++] ? ++pieces : pieces;
+      }, 0) > 1;
     },
 
     // test if any major diagonals on this board contain conflicts
@@ -138,6 +131,7 @@
       var conflict = false;
       var length = -rows.length;
       var board = this;
+      
       for (var i = length; i < rows.length; i++) {
         conflict = conflict || board.hasMajorDiagonalConflictAt(i);
       }
@@ -151,16 +145,9 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      var rows = this.rows();
-      var col = minorDiagonalColumnIndexAtFirstRow;
-      var pieces = 0;
-      rows.forEach(function(row) {
-        if (row[col] === 1) {
-          pieces++;
-        }
-        col--;
-      });
-      return pieces > 1;
+      return this.rows().reduce(function(pieces, row, rowIndex) {
+        return !!row[minorDiagonalColumnIndexAtFirstRow--] ? ++pieces : pieces;
+      }, 0) > 1;
     },
 
     // test if any minor diagonals on this board contain conflicts
