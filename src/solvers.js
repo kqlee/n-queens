@@ -53,27 +53,29 @@ window.countNRooksSolutions = function(n) {
   // console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   // return solutionCount;
 
-  // instantiate new board for n
-  var board = new Board(n);
-  // store rows in var
+  var board = new Board({n: n});
   var rows = this.rows();
-  var thisBoard = this;
-  // declare recursive function for iterating over row
-  var checkRow = function(row) {
-  // iterate over first row
-    row.forEach(function(square, index, row) {
-    // toggle index
-      thisBoard.togglePiece(index, a);
-      // if conflict
-        // toggle back
-      // call recursively on next row
-    });
+  // var col = 0;
+  var tally = 0;
+
+  var checkRow = function(rowNum) {
+    var solution = n === rowNum;
+
+    for (var col = 0; col < rows.length; col++) {
+      board.togglePiece(rowNum, col);
+      if (!board.hasAnyRooksConflicts()) {
+        checkRow(++rowNum);
+      } else {
+        board.togglePiece(rowNum, col);
+      }
+    }
+    if (solution) {
+      tally++;
+    }
   };
 
-  rows.forEach(function(row, rowIndex) {
-
-  });
-
+  checkRow(0);
+  return tally;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
